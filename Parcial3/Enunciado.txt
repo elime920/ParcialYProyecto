@@ -1,1 +1,6 @@
 Problema 6: Ecuaciones Diferenciales Parciales Elípticas
+
+- Metodos para solucionar sistema lineal:
+1. Eliminacion Gaussiana
+2. Gauss - Seidel
+3. SOR
