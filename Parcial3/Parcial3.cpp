@@ -14,8 +14,8 @@ const int m = 5;
 const int Nx = n-1;  //Mesh points
 const int Ny = m-1;
 
-double F(double [], double []);
-double G(double [][Ny]);
+void F(double [][Ny]);
+void G(double [][Ny]);
 
 
 int main()
@@ -29,9 +29,6 @@ int main()
 
   double w[Nx][Ny];
   int N = 100;
-
-  double x[Nx];
-  double y[Ny];
 
   //Paso 5              
   
@@ -61,22 +58,22 @@ int main()
   return 0;
 }
 
-// f(x,y) pero creo que la tengo mala porque creo que tambien          
-// debería ser una matriz, solo que aún no estiendo como               
+// f(x,y) pero creo que la tengo mala , solo que aún no estiendo como               
 // la debo poner.                                                      
 
-double F(double x[], double y[])
+void F(double w[Nx][Ny])
 {
   for (int i=0; i <= n; i++)
     {
       for (int j = 0; i <= m; j++)
-	return x[i]*exp(y[j]);
+	w[i][j] = i*exp(j);
         }
 }
 
-//Condiciones de frontera                                              
+//Condiciones de frontera
+// Esta tampoco se si la tengo buena!!!
 
-double G(double w[Nx][Ny])
+void G(double w[Nx][Ny])
 {
   for(int i = 1; i <= Nx+1; i++ )
     {
