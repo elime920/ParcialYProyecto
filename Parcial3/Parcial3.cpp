@@ -42,9 +42,9 @@ int main()
   //Paso 2 y 3                                                         
 
   for (int i = 0; i < Nx; i++)
-    x[i] = a + i*h;
+    w[i][Ny] = a + i*h;
   for (int j = 0; j < Ny; j++)
-    y[j] = c + j*k;
+    w[Nx][j] = c + j*k;
 
   //Paso 4       
   
