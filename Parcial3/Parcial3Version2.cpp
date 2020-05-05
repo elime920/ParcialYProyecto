@@ -36,9 +36,9 @@ int main()
   vector<vector<double>> w(n+1, vector<double>(m+1, 0));
   
   //poner condiciones de frontera y llenar los otros espacios con 0
-  for (int i = 0; i <= n; i++)
+  for (int i = 0; i < w.size(); i++)
   {
-    for (int j = 0; j <= m; j++)
+    for (int j = 0; j < w[0].size(); j++)
     {
       w[i][j] = g(i, j);
     }
@@ -46,16 +46,16 @@ int main()
   
   //primera impresion de w: se confirma que las condiciones de
   //frontera estan bien ubicadas
-  for (int i = 0; i <= n; i++)
+  for (int i = 0; i < w.size(); i++)
   {
-    for (int j = 0; j <= m; j++)
+    for (int j = 0; j < w[0].size(); j++)
     {
       cout << setprecision(3) << w[i][j] << "\t";
     }
     cout << endl;
   }
 
-  //Paso 5  
+  //Paso 5
   double lambda = static_cast<double>((h*h)/(k*k));
   double mu = 2*(1 + lambda);
   int l = 1;
@@ -79,7 +79,7 @@ int main()
       w[i][m-1] = z;
     }
    
-   //Paso 9
+    //Paso 9
     z = (F(n-1,m-1) + g(b,m-1) + lambda*g(n-1,d) + w[n-2][m-1] + lambda*w[n-1][m-2]) / mu;
     if (abs(w[n-1][m-1] - z) > NORM) {NORM = abs(w[n-1][m-1] - z);}
     w[n-1][m-1] = z;
@@ -127,16 +127,14 @@ int main()
     //Paso 17
     if (NORM <= TOL) 
     {
-      cout << "l = " << l << ", NORM = " << NORM << endl;
       //Paso 18
-      cout << "xi\tyi\tw[i][j]" << endl;
+      cout << "\nxi\tyi\tw[i][j]" << endl;
       for (int i = 1; i <= n-1; i++)
       {
         for(int j = 1; j <= m-1; j++)
         {
           cout << setprecision(3) << x(i) << "\t" << y(j) << "\t" << w[i][j] << endl;
         }
-        cout << endl; //salto de linea
       }
       
       //Paso 20
@@ -148,14 +146,14 @@ int main()
     l += 1;
   } //fin de ciclo while
   
-  cout << "El ciclo termino con " << l << " iteraciones y con valor"
+  cout << "\nEl ciclo termino con " << l << " iteraciones y con valor"
        " de NORM: " << NORM << endl;
   
   //Imprimir nuevamente el grid. Buena noticia: las condiciones
   //de frontera siguen intactas
-  for (int i = 0; i <= n; i++)
+  for (int i = 0; i < w.size(); i++)
   {
-    for (int j = 0; j <= m; j++)
+    for (int j = 0; j < w[0].size(); j++)
     {
       cout << setprecision(3) << w[i][j] << "\t"; //g(i, j) << "\t";//
     }
