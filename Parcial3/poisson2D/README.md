@@ -1,12 +1,14 @@
-#Poisson PDE solver, subject to boundary conditions and source term
+# Poisson PDE solver, subject to boundary conditions and source term
 
 The program written on the files contained here solves the Boundary Value Problem:
 
 ( d^2/dx^2 + d^2/dx^2 ) u(x, y) = f(x, y), 
-(x, y) in S
+
+(x, y) in S, 
+
 u(x, y) = g(x, y) on the boundary of S
 
-#Files:
+# Files:
 
 1. *poisson2D.h*: class definition header file
 
@@ -16,11 +18,11 @@ u(x, y) = g(x, y) on the boundary of S
 
 4. *eqSolve.cpp*: main implementation. Depending on which problem is to be solved, include one of the two header files mentioned above.
 
-#Compilation:
+# Compilation:
 
 *g++ eqSolve.cpp poisson2D.cpp -o eqSolve.exe*
 
-#TO-DO:
+# TO-DO:
 
 1. Add another solver for the system of linear equations (using GSL).
 
