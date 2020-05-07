@@ -1,4 +1,4 @@
-//poisson2D class member-functions definitions
+//poisson2D class member-function definitions
 #include <iostream>
 #include <cmath>
 #include <vector>
