@@ -1,6 +1,9 @@
-//Definition of class poisson2D
+//poisson2D class declaration. Member functions defined in poisson2D.cpp
 #include <vector>
 #include <functional>
+
+#ifndef POISSON2D_H
+#define POISSON2D_H
 
 //class poisson2D: two-dim. Poisson finite-difference implementation
 class poisson2D
@@ -8,9 +11,9 @@ class poisson2D
   public:
     //constructor
     poisson2D(double, double, double, double, 
-            unsigned int, unsigned int, 
-            std::function<double(unsigned int, unsigned int)>,
-            std::function<double(unsigned int, unsigned int)>);
+              unsigned int, unsigned int, 
+              std::function<double(unsigned int, unsigned int)>,
+              std::function<double(unsigned int, unsigned int)>);
      
     //destructor
     ~poisson2D();
@@ -54,3 +57,5 @@ class poisson2D
     std::vector<std::vector<double>> M; //solver matrix
 
 }; //end class poisson2D
+
+#endif
