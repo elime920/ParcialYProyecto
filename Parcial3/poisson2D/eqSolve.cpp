@@ -1,4 +1,4 @@
-//Application of class "bvp2D"
+//Program to test class "poisson2D"
 #include <iostream>
 #include <iomanip>
 #include "poisson2D.h"
