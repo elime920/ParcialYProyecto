@@ -1,3 +1,4 @@
+//example 1 setup: parameters, source, boundary and solution
 #include <cmath>
 
 #define _USE_MATH_DEFINES
@@ -37,4 +38,10 @@ double boundBVP(unsigned int i, unsigned int j)
   else if (j == yPoints) value = 200.0 * x(i);
   
   return value;
+}
+
+//analytic solution
+double analyticBVP(unsigned int i, unsigned int j)
+{
+  return 400.0 * x(i) * y(j);
 }
