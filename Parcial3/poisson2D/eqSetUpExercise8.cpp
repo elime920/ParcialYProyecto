@@ -5,9 +5,10 @@
 
 //equation parameters
 double xInit = 0.0, xFin = 6.0, yInit = 0.0, yFin = 5.0;
-double stepX = 0.4, stepY = 1.0 / 3.0;
-unsigned int xPoints = static_cast<double>((xFin - xInit) / stepX);
-unsigned int yPoints = static_cast<double>((yFin - yInit) / stepY);
+unsigned int xPoints = 15, yPoints = 15;
+
+double stepX = (xFin - xInit) / xPoints;
+double stepY = (yFin - yInit) / yPoints;
 
 //outputs x value of index i given
 double x(unsigned int i)
