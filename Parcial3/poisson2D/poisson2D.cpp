@@ -3,6 +3,9 @@
 #include <cmath>
 #include <vector>
 #include <functional>
+#include <fstream>
+#include <iomanip>
+#include <cstdlib>
 #include "poisson2D.h"
 
 #define _USE_MATH_DEFINES
@@ -13,7 +16,7 @@ poisson2D::poisson2D(double xInit, double xFin, double yInit, double yFin,
                      std::function<double(unsigned int, unsigned int)> sf,
                      std::function<double(unsigned int, unsigned int)> bf)
                      
-  : x0(xInit), xN(xFin), y0(yInit), yN(yFin), //extremal points
+  : x0(xInit), xF(xFin), y0(yInit), yF(yFin), //extremal points
     Nx(xPoints), Ny(yPoints), //quantity of points on x and y axes
     sFunc(sf), bFunc(bf), //source and boundary functions
     dim((Nx - 1) * (Ny - 1)), //size of vector and matrix implementations
@@ -33,7 +36,7 @@ poisson2D::~poisson2D()
 //set the computation parameters lambda and mu
 void poisson2D::setComputationParams()
 {
-  lambda = pow( ( (Ny * (xN - x0) ) / ( Nx * (yN - y0) ) ), 2 );
+  lambda = pow( ( (Ny * (xF - x0) ) / ( Nx * (yF - y0) ) ), 2 );
   mu = 2.0 * (1.0 + lambda);
 }
 
@@ -82,10 +85,10 @@ void poisson2D::setb()
   {
     for (i = 1; i < Nx; i++)
     {
-      l = i - 1 + (Nx - 1) * (j - 1); //unified indices
+      l = i - 1 + (Nx - 1) * (j - 1); //unified index
       
       //source term
-      b[l] = pow( (xN - x0) / Nx , 2) * source(i, j);
+      b[l] = pow( (xF - x0) / Nx , 2) * source(i, j);
       
       //boundary terms
       if (i == 1) b[l] -= boundary(0, j);
@@ -97,7 +100,7 @@ void poisson2D::setb()
 }
 
 //solve the system Mw = b for w, using Gauss-Jordan elimination
-void poisson2D::GaussLinearSolve()
+void poisson2D::solveGaussJordan()
 {
   //Row-reduced echelon form of [M | w]
   double value = 0.0, factor = 0.0;
@@ -135,16 +138,139 @@ void poisson2D::GaussLinearSolve()
   }
 }
 
+//solve the system Mw = b for w, using Jacobi iterative method
+void poisson2D::solveJacobi(unsigned int N)
+{
+  unsigned int k = 0;
+  double partSum;
+  std::vector<double> sln = b;
+  
+  while ( k < N )
+  {
+    for (unsigned int i = 0; i < b.size(); i++)
+    {
+      partSum = 0.0;
+      
+      for (unsigned int j = 0; j < b.size(); j++)
+        {if (j != i) partSum += M[i][j] * sln[j];}
+      
+      sln[i] = (b[i] - partSum) / M[i][i];
+    }
+    k += 1;
+  }
+  b = sln;
+}
+
+//solve the system Mw = b for w, using Gauss-Seidel iterative method
+void poisson2D::solveGaussSeidel(unsigned int N)
+{
+  unsigned int k = 0;
+  double partSum1, partSum2;
+  std::vector<double> sln = b;
+  
+  while ( k < N )
+  {
+    for (unsigned int i = 0; i < b.size(); i++)
+    {
+      partSum1 = 0.0, partSum2 = 0.0;
+      
+      for (unsigned int j = 0; j < i; j++)
+        {partSum1 += M[i][j] * sln[j];}
+      
+      for (unsigned int j = i + 1; j < b.size(); j++)
+        {partSum2 += M[i][j] * sln[j];}
+      
+      sln[i] = (b[i] - partSum1 - partSum2) / M[i][i];
+    }
+    k += 1;
+  }
+  b = sln;
+}
+
+//solve the system Mw = b for w, using SOR iterative method
+void poisson2D::solveSOR(unsigned int N)
+{
+  unsigned int k = 0;
+  double omega, partSum1, partSum2;
+  std::vector<double> sln = b;
+  
+  omega = 4.0 / ( 2.0 + sqrt( 4.0 - pow( (cos(M_PI / Nx) + cos(M_PI / Ny) ) , 2) ) );
+  
+  while ( k < N )
+  {
+    for (unsigned int i = 0; i < b.size(); i++)
+    {
+      partSum1 = 0.0, partSum2 = 0.0;
+      
+      for (unsigned int j = 0; j < i; j++)
+        {partSum1 += M[i][j] * sln[j];}
+      
+      for (unsigned int j = i + 1; j < b.size(); j++)
+        {partSum2 += M[i][j] * sln[j];}
+      
+      sln[i] = (1.0 - omega) * sln[i] + 
+               omega * (b[i] - partSum1 - partSum2) / M[i][i];
+    }
+    k += 1;
+  }
+  b = sln;
+}
+
 //execute functions involved to solve the equation
-void poisson2D::doSolve()
+void poisson2D::doSolve(std::string choice, unsigned int N)
 {
   setb(); //configure b
   setM(); //configure M
-  GaussLinearSolve(); //solve System
+
+  //solve System
+  if (choice == "Gauss-Jordan") solveGaussJordan();
+  else if (choice == "Jacobi") solveJacobi(N);
+  else if (choice == "Gauss-Seidel") solveGaussSeidel(N);
+  else if (choice == "SOR") solveSOR(N);
 }
 
 //return the lth component of the solution vector b
 double poisson2D::getb(unsigned int l)
 {
   return b[l];
+}
+
+//save results to a file
+void poisson2D::writeToFile(std::string fileName)
+{
+  std::ofstream writeSolution;
+  writeSolution.open( fileName.c_str() ); //open the file for input
+  
+  //check success when accessing the file
+  if ( writeSolution.fail() )
+  {
+    std::cout << "File could not be opened." << std::endl;
+    exit(1);
+  }
+  
+  //output file stream format
+  writeSolution << std::setiosflags(std::ios::fixed)
+                << std::setiosflags(std::ios::showpoint)
+                << std::setprecision(4)
+                << std::scientific;
+                
+  //write data to file
+  unsigned int l; //unified index
+  for (unsigned int j = 0; j <= Ny; j++)
+  {
+    for (unsigned int i = 0; i <= Nx; i++)
+    {
+      if ( i == 0 || j == 0 || i == Nx || j == Ny)
+        {writeSolution << boundary(i, j) << " ";}
+      else
+      {
+        l = i - 1 + (Nx - 1) * (j - 1);
+        writeSolution << b[l] << " ";
+      }
+    }
+    writeSolution << std::endl;
+  }
+  
+  writeSolution.close();
+  std::cout << "\nFile " << fileName << " successfully written." << std::endl;
 }
