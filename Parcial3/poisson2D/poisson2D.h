@@ -38,20 +38,23 @@ class poisson2D
     double boundary(unsigned int, unsigned int);
   
     void setM(); //create the matrix associated to the BVP
-  
     void setb(); //set inhomogeneity vector b
   
-    void GaussLinearSolve(); //solve linear eq. with Gauss-Jordan elim.
+    void solveGaussJordan(); //solve linear eq. with Gauss-Jordan elim.    
+    void solveJacobi(unsigned int); //solve linear eq. with Jacobi method
+    void solveGaussSeidel(unsigned int); //solve linear eq. with G.-S. method
+    void solveSOR(unsigned int); //solve linear eq. using SOR method
   
-    void doSolve(); //execute functions involved to solve the equation
+    void doSolve(std::string, unsigned int); //execute functions involved to solve the equation
     
     double getb(unsigned int); //output the result vector b
+    
+    void writeToFile(std::string); //save output to file as matrix
 
   private:
-    //problem parameters and constants
     unsigned short int Nx, Ny, dim; //points on x, on y, and inner grid
-    double x0, xN; //endpoints on x
-    double y0, yN; //endpoints on y
+    double x0, xF; //endpoints on x
+    double y0, yF; //endpoints on y
     double lambda, mu; //difference equation parameters
     std::vector<double> b; //bound and source terms
     std::vector<std::vector<double>> M; //solver matrix
