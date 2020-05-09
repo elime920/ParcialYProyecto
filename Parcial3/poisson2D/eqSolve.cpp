@@ -54,7 +54,7 @@ int main()
                   << printReal << y(j) << " "
                   << printReal << bvp.getSln(l) << " "
                   << printReal << exSln << "  | " 
-                  << printComp << fabs(exSln - bvp.getb(l)) 
+                  << printComp << fabs(exSln - bvp.getSln(l)) 
                   << std::endl;
       }
     }
