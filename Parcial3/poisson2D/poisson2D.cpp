@@ -229,8 +229,8 @@ void poisson2D::doSolve(std::string choice, unsigned int N)
   else if (choice == "SOR") solveSOR(N);
 }
 
-//return the lth component of the solution vector b
-double poisson2D::getb(unsigned int l)
+//return the solution: lth component of the solution vector b
+double poisson2D::getSln(unsigned int l)
 {
   return b[l];
 }
