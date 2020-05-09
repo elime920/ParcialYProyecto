@@ -6,7 +6,13 @@ The program written on the files contained here solves the Boundary Value Proble
 
 (x, y) in S, 
 
-u(x, y) = g(x, y) on the boundary of S
+u(x, y) = g(x, y) on the boundary of S.
+
+# Folders:
+
+- examples: contains two header files (*example1.h* and *example2.h*) to be included inside the main program, for them to be solved.
+
+- exercises: contains seven header files (*exercise1.h*, *exercise2.h*, *exercise3a.h*, *exercise3b.h*, *exercise3c.h*, *exercise3d.h*, *exercise8.h*) to be included inside the main program, for them to be solved.
 
 # Files:
 
@@ -14,9 +20,8 @@ u(x, y) = g(x, y) on the boundary of S
 
 2. *poisson2D.cpp*: class *poisson2D* member-functions definitions
 
-3. *eqSetUpExample1.h*, *eqSetUpExample2.h*: header files setting up the details for particular examples given in Burden.
+3. *eqSolve.cpp*: main implementation. Depending on which problem is to be solved, include one of the problem headers.
 
-4. *eqSolve.cpp*: main implementation. Depending on which problem is to be solved, include one of the two header files mentioned above.
 
 # Compilation:
 
@@ -24,8 +29,4 @@ u(x, y) = g(x, y) on the boundary of S
 
 # TO-DO:
 
-1. Add another solver for the system of linear equations (using GSL).
-
-2. Format the output to a file, in such a way that a matrix with elements well placed can be latter imported as data input on another program.
-
-3. Plot the output (color map the matrix; plotutils, python, etc.)
+1.. Plot the output (color map the matrix; plotutils, python, etc.)
