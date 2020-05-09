@@ -3,9 +3,11 @@
 #include <iomanip>
 #include <string>
 #include "poisson2D.h"
-#include "eqSetUpExercise8.h"
+#include "exercises/exercise1.h"
 
-#define myPrint std::fixed << std::setw(5) << std::setprecision(3)
+#define printIndex std::left << std::setw(3)
+#define printReal std::right << std::setw(10) << std::fixed << std::setprecision(4)
+#define printComp std::setw(10) << std::scientific << std::setprecision(3)
 
 int main()
 { 
@@ -18,11 +20,13 @@ int main()
   std::string choice = "SOR";
   
   //solution to the BVP
-  bvp.doSolve(choice, 32);
+  bvp.doSolve(choice, 16);
   
   //print solution
+  unsigned int l = 0; //unified index to get elements from sln vector
+  double exSln = 0.0;
   std::cout << "Solution printing:" << std::endl;
-  std::cout << "i\tj\txi\t\tyj\t\tw(i,j)\t\tu(i,j)" << std::endl;
+  std::cout << "i   j       xi         yj         w(i,j)     u(i,j)    |u-w|" << std::endl;
   for (unsigned int i = 0; i <= xPoints; i++)
   {
     for (unsigned int j = 0; j <= yPoints; j++)
@@ -30,28 +34,34 @@ int main()
       //boundary terms
       if ( i == 0 || j == 0 || i == xPoints || j == yPoints)
       {
-        std::cout << i << "\t" << j << "\t"
-                  << myPrint << x(i) << "\t\t" 
-                  << myPrint << y(j) << "\t\t"
-                  << myPrint << boundBVP(i, j) << "\t\t"
-                  << myPrint << analyticBVP(i, j) << std::endl;
+        std::cout << printIndex << i << " " 
+                  << printIndex << j << " "
+                  << printReal << x(i) << " " 
+                  << printReal << y(j) << " "
+                  << printReal << boundBVP(i, j) << " "
+                  << printReal << analyticBVP(i, j) << "  | "
+                  << " - - " << std::endl;
       }
       
       //inner region terms
       else
       {
-      unsigned int l = i - 1 + (xPoints - 1) * (j - 1);
-      std::cout << i << "\t" << j << "\t"
-                << myPrint << x(i) << "\t\t" 
-                << myPrint << y(j) << "\t\t"
-                << myPrint << bvp.getb(l) << "\t\t"
-                << myPrint << analyticBVP(i, j) << std::endl;
+        l = i - 1 + (xPoints - 1) * (j - 1); //unified index
+        exSln = analyticBVP(i, j); //analytic solution
+        std::cout << printIndex << i << " " 
+                  << printIndex << j << " "
+                  << printReal << x(i) << " " 
+                  << printReal << y(j) << " "
+                  << printReal << bvp.getb(l) << " "
+                  << printReal << exSln << "  | " 
+                  << printComp << fabs(exSln - bvp.getb(l)) 
+                  << std::endl;
       }
     }
   }
   
-  //write to file. Give correct name to each run, instead of "myOutput.dat"
-  bvp.writeToFile("myOutput.dat");
+  //write to file
+  bvp.writeToFile("output.dat");
 
   return(0);
 } //end main
