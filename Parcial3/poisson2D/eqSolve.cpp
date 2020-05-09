@@ -3,7 +3,7 @@
 #include <iomanip>
 #include <string>
 #include "poisson2D.h"
-#include "exercises/exercise1.h"
+#include "exercises/exercise3b.h"
 
 #define printIndex std::left << std::setw(3)
 #define printReal std::right << std::setw(10) << std::fixed << std::setprecision(4)
@@ -52,7 +52,7 @@ int main()
                   << printIndex << j << " "
                   << printReal << x(i) << " " 
                   << printReal << y(j) << " "
-                  << printReal << bvp.getb(l) << " "
+                  << printReal << bvp.getSln(l) << " "
                   << printReal << exSln << "  | " 
                   << printComp << fabs(exSln - bvp.getb(l)) 
                   << std::endl;
