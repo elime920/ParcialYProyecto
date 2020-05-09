@@ -1,4 +1,4 @@
-# Poisson PDE solver, subject to boundary conditions and source term
+# Poisson PDE solver, subject to Dirichlet boundary conditions
 
 The program written on the files contained here solves the Boundary Value Problem:
 
@@ -29,4 +29,4 @@ u(x, y) = g(x, y) on the boundary of S.
 
 # TO-DO:
 
-1.. Plot the output (color map the matrix; plotutils, python, etc.)
+1.. Upload Python code to plot the output
