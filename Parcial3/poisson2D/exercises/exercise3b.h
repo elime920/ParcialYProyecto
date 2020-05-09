@@ -25,7 +25,7 @@ double y(unsigned int j)
 //source function f(x, y) evaluated at xi, yj
 double sourceBVP(unsigned int i, unsigned int j)
 {
-  return 0.0;
+  return -cos(x(i) + y(j)) - cos(x(i) - y(j));
 }
 
 //boundary conditions evaluated at xi, yj
