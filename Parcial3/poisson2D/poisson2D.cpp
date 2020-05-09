@@ -102,7 +102,7 @@ void poisson2D::setb()
 //solve the system Mw = b for w, using Gauss-Jordan elimination
 void poisson2D::solveGaussJordan()
 {
-  //Row-reduced echelon form of [M | w]
+  //Row-reduced echelon form of [M | b]
   double value = 0.0, factor = 0.0;
   for (unsigned int i = 0; i < M.size(); i++)
   {
@@ -143,7 +143,7 @@ void poisson2D::solveJacobi(unsigned int N)
 {
   unsigned int k = 0;
   double partSum;
-  std::vector<double> sln = b;
+  std::vector<double> sln(b.size(), 0.0); //initialize to a null vect.
   
   while ( k < N )
   {
@@ -166,7 +166,7 @@ void poisson2D::solveGaussSeidel(unsigned int N)
 {
   unsigned int k = 0;
   double partSum1, partSum2;
-  std::vector<double> sln = b;
+  std::vector<double> sln(b.size(), 0.0); //initialize to a null vect.
   
   while ( k < N )
   {
@@ -192,7 +192,7 @@ void poisson2D::solveSOR(unsigned int N)
 {
   unsigned int k = 0;
   double omega, partSum1, partSum2;
-  std::vector<double> sln = b;
+  std::vector<double> sln(b.size(), 0.0); //initialize to a null vect.
   
   omega = 4.0 / ( 2.0 + sqrt( 4.0 - pow( (cos(M_PI / Nx) + cos(M_PI / Ny) ) , 2) ) );
   
