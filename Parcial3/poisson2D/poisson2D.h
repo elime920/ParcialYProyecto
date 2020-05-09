@@ -47,7 +47,7 @@ class poisson2D
   
     void doSolve(std::string, unsigned int); //execute functions involved to solve the equation
     
-    double getb(unsigned int); //output the result vector b
+    double getSln(unsigned int); //output the solution vector component
     
     void writeToFile(std::string); //save output to file as matrix
 
