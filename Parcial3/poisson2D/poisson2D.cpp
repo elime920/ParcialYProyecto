@@ -235,8 +235,8 @@ double poisson2D::getSln(unsigned int l)
   return b[l];
 }
 
-//save results to a file
-void poisson2D::writeToFile(std::string fileName)
+//save results to a file as a matrix
+void poisson2D::saveAsMatrix(std::string fileName)
 {
   std::ofstream writeSolution;
   writeSolution.open( fileName.c_str() ); //open the file for input
@@ -269,6 +269,49 @@ void poisson2D::writeToFile(std::string fileName)
       }
     }
     writeSolution << std::endl;
+  }
+  
+  writeSolution.close();
+  std::cout << "\nFile " << fileName << " successfully written." << std::endl;
+}
+
+//save results to a file as three columns: x, y, w
+void poisson2D::saveAsColumns(std::string fileName)
+{
+  std::ofstream writeSolution;
+  writeSolution.open( fileName.c_str() ); //open the file for input
+  
+  //check success when accessing the file
+  if ( writeSolution.fail() )
+  {
+    std::cout << "File could not be opened." << std::endl;
+    exit(1);
+  }
+  
+  //output file stream format
+  writeSolution << std::setiosflags(std::ios::fixed)
+                << std::setiosflags(std::ios::showpoint)
+                << std::setprecision(4)
+                << std::scientific;
+                
+  //write data to file
+  unsigned int l; //unified index
+  for (unsigned int i = 0; i <= Nx; i++)
+  {
+    for (unsigned int j = 0; j <= Ny; j++)
+    {
+      if ( i == 0 || j == 0 || i == Nx || j == Ny)
+        {writeSolution << x0 + i * (xF - x0) / Nx << " " 
+                       << y0 + j * (yF - y0) / Ny << " " 
+                       << boundary(i, j) << std::endl;}
+      else
+      {
+        l = i - 1 + (Nx - 1) * (j - 1);
+        writeSolution << x0 + i * (xF - x0) / Nx << " " 
+                      << y0 + j * (yF - y0) / Ny << " " 
+                      << b[l] << std::endl;
+      }
+    }
   }
   
   writeSolution.close();
