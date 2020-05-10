@@ -3,11 +3,13 @@
 #include <iomanip>
 #include <string>
 #include "poisson2D.h"
-#include "exercises/exercise3b.h"
+#include "exercises/exercise3c.h"
 
 #define printIndex std::left << std::setw(3)
 #define printReal std::right << std::setw(10) << std::fixed << std::setprecision(4)
 #define printComp std::setw(10) << std::scientific << std::setprecision(3)
+
+void printOutput(poisson2D); //function prototype to print program output
 
 int main()
 { 
@@ -15,14 +17,33 @@ int main()
   poisson2D bvp(xInit, xFin, yInit, yFin, xPoints, yPoints, 
                 sourceBVP, boundBVP);
   
-  //choose a method to solve the problem
+  //choose a method to solve the problem and the number of iterations
   //Options: Gauss-Jordan, Jacobi, Gauss-Seidel, SOR
-  std::string choice = "SOR";
-  
-  //solution to the BVP
-  bvp.doSolve(choice, 16);
+  bvp.doSolve("SOR", 1);
   
   //print solution
+  int userOption;
+  std::cout << "Hello, if you want to see the solution on the screen "
+            "please enter 1, \notherwise if you only want it to be "
+            "saved in a file, please enter 0. \nNote that if you want "
+            "to export the data, 2 files will come out. \nThe first "
+            "contains the matrix of approximations and \nthe second "
+            "contains the values of x, y and their respective approximation." 
+            << std::endl;
+  std::cin >> userOption;
+  
+  if (userOption == 1) printOutput(bvp);
+  
+  //write to files
+  bvp.saveAsMatrix("outputMat.dat"); //save as matrix data
+  bvp.saveAsColumns("outputCols.dat"); //save as column data
+
+  return(0);
+} //end main
+
+//Function to print to terminal the output of the execution
+void printOutput(poisson2D bvp)
+{
   unsigned int l = 0; //unified index to get elements from sln vector
   double exSln = 0.0;
   std::cout << "Solution printing:" << std::endl;
@@ -59,9 +80,4 @@ int main()
       }
     }
   }
-  
-  //write to file
-  bvp.writeToFile("output.dat");
-
-  return(0);
-} //end main
+}
