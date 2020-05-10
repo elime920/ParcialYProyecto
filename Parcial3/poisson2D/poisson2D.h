@@ -27,13 +27,11 @@ class poisson2D
     
     //source function data type
     std::function<double(unsigned int, unsigned int)> sFunc;
-    
     //boundary function data type
     std::function<double(unsigned int, unsigned int)> bFunc;
     
     //source function prototype
     double source(unsigned int, unsigned int);
-    
     //boundary function prototype
     double boundary(unsigned int, unsigned int);
   
@@ -49,7 +47,8 @@ class poisson2D
     
     double getSln(unsigned int); //output the solution vector component
     
-    void writeToFile(std::string); //save output to file as matrix
+    void saveAsMatrix(std::string); //save output to file as matrix
+    void saveAsColumns(std::string); //save output to file as data columns
 
   private:
     unsigned short int Nx, Ny, dim; //points on x, on y, and inner grid
