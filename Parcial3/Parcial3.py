@@ -11,7 +11,7 @@ from matplotlib.ticker import MaxNLocator
 
 # The data is extracted from the text files.
 matrix = np.loadtxt('myOutput2.dat', unpack = True)  # File Matrix
-x, y, w = np.loadtxt('Completo.dat', unpack=True)    # File x, y, w.
+x, y, w = np.loadtxt('Completedata.dat', unpack=True)    # File x, y, w.
 
 # ----------------------
 # 3D histogram.
@@ -54,7 +54,6 @@ ax.bar3d(xpos, ypos, zpos, dx, dy, dz, color=color_values, zsort='average', alph
 
 # Smooth surface
 
-#fig = plt.figure(figsize=(30, 10))
 ax1 = fig.add_subplot(122, projection='3d')
 surf = ax1.plot_trisurf(x, y, w, cmap=cm.jet, linewidth=0.1)
 fig.colorbar(surf, shrink=0.5, aspect=5)
