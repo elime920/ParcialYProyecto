@@ -8,11 +8,6 @@ The program written on the files contained here solves the Boundary Value Proble
 
 u(x, y) = g(x, y) on the boundary of S.
 
-# Folders:
-
-- examples: contains two header files (*example1.h* and *example2.h*) to be included inside the main program, for them to be solved.
-
-- exercises: contains seven header files (*exercise1.h*, *exercise2.h*, *exercise3a.h*, *exercise3b.h*, *exercise3c.h*, *exercise3d.h*, *exercise8.h*) to be included inside the main program, for them to be solved.
 
 # Files:
 
@@ -22,6 +17,15 @@ u(x, y) = g(x, y) on the boundary of S.
 
 3. *eqSolve.cpp*: main implementation. Depending on which problem is to be solved, include one of the problem headers.
 
+4. *Parcial3.py*: python code to plot the output for several examples.
+
+
+# Folders:
+
+- examples: contains two header files (*example1.h* and *example2.h*) to be included inside the main program, for them to be solved.
+
+- exercises: contains seven header files (*exercise1.h*, *exercise2.h*, *exercise3a.h*, *exercise3b.h*, *exercise3c.h*, *exercise3d.h*, *exercise8.h*) to be included inside the main program, for them to be solved.
+
 
 # Compilation:
 
@@ -29,4 +33,4 @@ u(x, y) = g(x, y) on the boundary of S.
 
 # TO-DO:
 
-1.. Upload Python code to plot the output
+--
