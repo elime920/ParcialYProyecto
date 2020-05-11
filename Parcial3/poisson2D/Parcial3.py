@@ -10,8 +10,8 @@ from matplotlib.ticker import MaxNLocator
 
 
 # The data is extracted from the text files.
-matrix = np.loadtxt('myOutput2.dat', unpack = True)  # File Matrix
-x, y, w = np.loadtxt('Completedata.dat', unpack=True)    # File x, y, w.
+matrix = np.loadtxt('outputMat.dat', unpack = True)  # File Matrix
+x, y, w = np.loadtxt('outputCols.dat', unpack=True)    # File x, y, w.
 
 # ----------------------
 # 3D histogram.
@@ -45,18 +45,32 @@ color_values = cm.jet(norm(fracs.tolist()))
 fig = plt.figure(figsize=(10, 10))
 plt.pcolormesh(matrix,cmap='YlOrRd')
 plt.colorbar()
+plt.title('Mapa de Calor', fontsize=20)
+plt.savefig('Exercise8_1.png')
 
 # 3D Histogram
 
-fig = plt.figure(figsize=(40, 10))
-ax = fig.add_subplot(121, projection='3d')
+fig = plt.figure(figsize=(15,10))
+ax = fig.add_subplot(111, projection='3d')
 ax.bar3d(xpos, ypos, zpos, dx, dy, dz, color=color_values, zsort='average', alpha =0.5)
+plt.title('Histograma de Flujo de Temperatura', fontsize=20)
+ax.set_xlabel(r'$x$', fontsize=20)
+ax.set_ylabel(r'$y$', fontsize=20)
+ax-set_zlabel(r'$ u ( x, y ) $', fontsize=20)
+plt.savefig('Exercise8_2.png')
 
 # Smooth surface
 
-ax1 = fig.add_subplot(122, projection='3d')
+fig = plt.figure(figsize=(15,10))
+ax1 = fig.add_subplot(111, projection='3d')
 surf = ax1.plot_trisurf(x, y, w, cmap=cm.jet, linewidth=0.1)
 fig.colorbar(surf, shrink=0.5, aspect=5)
+plt.title('Superficie de Flujo de Temperatura', fontsize=20)
+ax.set_xlabel(r'$x$', fontsize=20)
+ax.set_ylabel(r'$y$', fontsize=20)
+ax-set_zlabel(r'$ u ( x, y ) $', fontsize=20)
+plt.savefig('Exercise8_3.png')
+
 
 
 plt.show()
