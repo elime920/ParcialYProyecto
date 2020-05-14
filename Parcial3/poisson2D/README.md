@@ -24,7 +24,7 @@ u(x, y) = g(x, y) on the boundary of S.
 
 - examples: contains two header files (*example1.h* and *example2.h*) to be included inside the main program, for them to be solved.
 
-- exercises: contains seven header files (*exercise1.h*, *exercise2.h*, *exercise3a.h*, *exercise3b.h*, *exercise3c.h*, *exercise3d.h*, *exercise8.h*) to be included inside the main program, for them to be solved.
+- exercises: contains a subfolder named 'output images' where graphics from runtime executions are stored, and seven header files (*exercise1.h*, *exercise2.h*, *exercise3a.h*, *exercise3b.h*, *exercise3c.h*, *exercise3d.h*, *exercise8.h*) to be included inside the main program, for them to be solved.
 
 
 # Compilation:
@@ -33,4 +33,4 @@ u(x, y) = g(x, y) on the boundary of S.
 
 # TO-DO:
 
---
+1. Fix some weird behaviours of the program.
