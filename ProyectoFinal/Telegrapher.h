@@ -36,7 +36,7 @@ class Telegrapher
   void setW(); //create the matrix associated to the BVP
   double getSln(unsigned int, unsigned int);
  private:
-  unsigned short int NT, Nz, dim;
+  unsigned short int NT, NZ, dim;
   double T0, T;
   double Z0, ZF;
   double lambda, alpha, beta; //difference equation parameters
