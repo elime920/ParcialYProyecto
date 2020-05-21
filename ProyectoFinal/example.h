@@ -32,7 +32,7 @@ double T(unsigned int j)
 double sourceBVP(unsigned int i, unsigned int j)
 {
   double value = 0.0;
-  if(j == 0) value = -exp(Z(i));
+  if(i == 0) value = -exp(Z(j));
   return value;
 }
 
