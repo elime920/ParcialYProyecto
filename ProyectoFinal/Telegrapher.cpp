@@ -12,7 +12,7 @@
 
 //constructor
 Telegrapher::Telegrapher(double TInit, double TFin, double ZInit,
-			 double Zfin, double ZFin,double kcons,
+			 double ZFin,double kcons,
 			 double stepZ, double stepT,
 		         unsigned int TPoints, unsigned int ZPoints, 
                          std::function<double(unsigned int, unsigned int)> sf,
@@ -78,7 +78,7 @@ void Telegrapher::setW()
     {
       if (row == 0) W[row][col] = boundary(0,col);
       if (col == 0) W[row][col] = boundary(row,0);
-      if (col == Nz-1) W[row][col] = boundary(row,Nz);
+      if (col == NZ-1) W[row][col] = boundary(row,NZ);
 
       if (row == 1) W[row][col] = mu * boundary(0,col) + nu * source(0,col) + sigma* (boundary(0,col-1) +boundary(0,col+1));
 
