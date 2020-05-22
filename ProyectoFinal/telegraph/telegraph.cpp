@@ -12,17 +12,26 @@
 #define _USE_MATH_DEFINES
 
 //constructor
-telegraph::telegraph(double TInit, double TFin, double ZInit, double ZFin, 
-                     unsigned int TPoints, unsigned int ZPoints, double K,
-                     std::function<double(unsigned int, unsigned int)> bf, 
-                     std::function<double(unsigned int)> icd)
+telegraph::telegraph(std::vector<double> EndPoints,
+                     std::vector<double> Params, 
+                     std::vector<std::function<double(double)>> vBC,
+                     std::vector<std::function<double(double)>> iBC,
+                     unsigned int tPoints, unsigned int zPoints)
                      
-  : T0(TInit), TF(TFin), Z0(ZInit), ZF(ZFin), //extremal points
-    NT(TPoints), NZ(ZPoints), //quantity of points on T and Z axes
-    k(K), bFunc(bf), initConDer(icd), //k-value of the PDE, and boundary functions
-    w(NT+1, std::vector<double>(NZ+1, 0)) //matrix w
+  : NT(tPoints), NZ(zPoints), //quantity of points along t and z axes
+    bcV(vBC), bcI(iBC), //set boundary functions
+    wV(NT+1, std::vector<double>(NZ+1, 0.0)), //matrix w for voltage
+    wI(NT+1, std::vector<double>(NZ+1, 0.0)) //matrix w for current
 {
   std::cout << "Telegrapher's PDE solver started.\n" << std::endl;
+  
+  //unpack variables from vectors
+  R = Params[0]; L = Params[1]; C = Params[2]; G = Params[3];
+  
+  //temporary location: endpoints will be adimensionalized
+  T0 = EndPoints[0]; TF = EndPoints[1];
+  Z0 = EndPoints[2]; ZF = EndPoints[3];
+  
   //Use the initialized parameters to set the secondary ones
   setComputationParams();
 }
@@ -35,71 +44,121 @@ telegraph::~telegraph()
 
 //set the computation parameters
 void telegraph::setComputationParams()
-{
+{ 
+  //proportionality constants to convert t and z to T and Z
+  Jt = sqrt((G * R) / (L * C));
+  Jz = sqrt(G * R);
+  
+  //k factor appearing on adimensionalized PDE
+  k = sqrt((R * C) / (G * L)) + sqrt((G * L) / (R * C));
+  
+  //adimensionalize endpoints
+  T0 *= Jt; 	TF *= Jt; 	Z0 *= Jz; 	ZF *= Jz;
 
-  double hT = static_cast<double>((TF - T0) / NT);
-  double hZ = static_cast<double>((ZF - Z0) / NZ);
+  //steps along T and Z
+  hT = static_cast<double>((TF - T0) / NT);
+  hZ = static_cast<double>((ZF - Z0) / NZ);
 
+  //iteration constants
   alpha = (0.5 * k * hT - 1.0) / (0.5 * k * hT + 1.0);
-  beta = (2.0 - 2.0 * pow((hT/hZ), 2) - pow(hT, 2))/(0.5 * k * hT + 1.0);
+  beta = (2.0 - 2.0 * pow((hT/hZ), 2) - pow(hT, 2)) / 
+         (0.5 * k * hT + 1.0);
   lambda = pow((hT/hZ), 2) / (0.5 * k * hT + 1.0);
   mu = 1.0 - pow((hT/hZ), 2) - 0.5 * pow(hT, 2);
   nu = hT - 0.5 * k * pow(hT, 2);
   sigma = 0.5 * pow((hT/hZ), 2);
 }
 
-//boundary function evaluation
-double telegraph::boundary(unsigned int i, unsigned int j)
+double telegraph::getT(unsigned int i)
 {
-  return bFunc(i, j);
+  return T0 + i * hT;
 }
 
-//time derivative at T0 function evaluation
-double telegraph::timeDerOnT0(unsigned int j)
+double telegraph::getZ(unsigned int j)
 {
-  return initConDer(j);
+  return Z0 + j * hZ;
 }
 
-//set the matrix associated to the BVP
-void telegraph::setw()
+//set the matrix associated to the voltage
+void telegraph::setwV()
 {
-  //bounds
-  for (unsigned int i = 0; i <= NT; i++)
+  //use condition of voltage at t0
+  for (unsigned int j = 0; j <= NT; j++)
   {
-    for (unsigned int j = 0; j <= NZ; j++)
-    {
-      w[i][j] = boundary(i, j);
-    }
+    wV[0][j] = bcV[0](getZ(j) / Jz);
   }
   
-  //first time line
-  for (unsigned int j = 1; j < NZ; j++)
+  //use condition of time derivative of voltage at t0
+  for (unsigned int j = 0; j <= NT; j++)
   {
-    w[1][j] = mu * boundary(0,j) + nu * timeDerOnT0(j) + 
-             sigma * (boundary(0,j-1) + boundary(0,j+1));
+    wV[1][j] = mu * bcV[0](getZ(j)/Jz) + nu * bcV[1](getZ(j)/Jz)/Jz + 
+               sigma * (bcV[0](getZ(j-1)/Jz) + bcV[0](getZ(j+1)/Jz));
   }
-
-  //inner region
+  
+  //use spatial boundary conditiones: voltage at z0 and zf
   for (unsigned int i = 0; i <= NT; i++)
   {
-    for (unsigned int j = 0; j <= NZ; j++)
+    wV[i][0] = bcV[2](getT(i)/Jt); //voltage at z0
+    wV[i][NZ] = bcV[3](getT(i)/Jt); //voltage at zf
+  }
+  
+  //inner region
+  for (unsigned int i = 1; i < NT; i++)
+  {
+    for (unsigned int j = 1; j < NZ; j++)
     {
-      if (i > 0 && i < NT && j > 0 && j < NZ) 
-      { 
-        w[i+1][j] = alpha * w[i-1][j] + beta * w[i][j] + 
-                    lambda * (w[i][j-1] + w[i][j+1]);
-      }
+      wV[i+1][j] = alpha * wV[i-1][j] + beta * wV[i][j] + 
+                    lambda * (wV[i][j-1] + wV[i][j+1]);
     }
   }
 }
 
-double telegraph::getSln(unsigned int i, unsigned int j)
+//set the matrix associated to the current
+void telegraph::setwI()
 {
-  return w[i][j];
+  //use condition of current at t0
+  for (unsigned int j = 0; j <= NT; j++)
+  {
+    wI[0][j] = bcI[0](getZ(j) / Jz);
+  }
+  
+  //use condition of time derivative of current at t0
+  for (unsigned int j = 0; j <= NT; j++)
+  {
+    wI[1][j] = mu * bcI[0](getZ(j)/Jz) + nu * bcI[1](getZ(j)/Jz)/Jz + 
+               sigma * (bcI[0](getZ(j-1)/Jz) + bcI[0](getZ(j+1)/Jz));
+  }
+  
+  //use spatial boundary conditiones: current at z0 and zf
+  for (unsigned int i = 0; i <= NT; i++)
+  {
+    wI[i][0] = bcI[2](getT(i)/Jt); //current at z0
+    wI[i][NZ] = bcI[3](getT(i)/Jt); //current at zf
+  }
+  
+  //inner region
+  for (unsigned int i = 1; i < NT; i++)
+  {
+    for (unsigned int j = 1; j < NZ; j++)
+    {
+      wI[i+1][j] = alpha * wI[i-1][j] + beta * wI[i][j] + 
+                    lambda * (wI[i][j-1] + wI[i][j+1]);
+    }
+  }
+}
+
+double telegraph::getwV(unsigned int i, unsigned int j)
+{
+  return wV[i][j];
+}
+
+double telegraph::getwI(unsigned int i, unsigned int j)
+{
+  return wI[i][j];
 }
 
 //save results to a file as a matrix
-void telegraph::saveAsMatrix(std::string fileName)
+void telegraph::saveAsMatrix(std::vector<std::vector<double>> &w, std::string fileName)
 {
   std::ifstream readFile; //in case file already exists
   
@@ -142,7 +201,6 @@ void telegraph::saveAsMatrix(std::string fileName)
                 << std::scientific;
                 
   //write data to file
-  unsigned int l; //unified index
   for (unsigned int i = 0; i <= NT; i++)
   {
     for (unsigned int j = 0; j <= NZ; j++)
@@ -157,7 +215,7 @@ void telegraph::saveAsMatrix(std::string fileName)
 }
 
 //save results to a file as three columns: x, y, w
-void telegraph::saveAsColumns(std::string fileName)
+void telegraph::saveAsCols(std::vector<std::vector<double>> &w, std::string fileName)
 {
   std::ifstream readFile; //in case file already exists
   
@@ -200,17 +258,34 @@ void telegraph::saveAsColumns(std::string fileName)
                 << std::scientific;
                 
   //write data to file
-  unsigned int l; //unified index
   for (unsigned int i = 0; i <= NT; i++)
   {
     for (unsigned int j = 0; j <= NZ; j++)
     {
-      writeSolution << T0 + i * (TF - T0) / NT << " " 
-                    << Z0 + j * (ZF - Z0) / NZ << " " 
+      writeSolution << T0 + i * hT << " " 
+                    << Z0 + j * hZ << " " 
                     << w[i][j] << std::endl;
     }
   }
   
   writeSolution.close();
   std::cout << "\nFile " << fileName << " successfully written." << std::endl;
+}
+
+//save the desired output to a file
+void telegraph::saveToFile(std::string vOrI, std::string matOrCol,
+                           std::string fileName)
+{
+  if(vOrI == "V")
+  {
+    if (matOrCol == "Matrix") saveAsMatrix(wV, fileName);
+    else if (matOrCol == "Columns") saveAsCols(wV, fileName);
+  }
+  
+  else if(vOrI == "I")
+  {
+    if (matOrCol == "Matrix") saveAsMatrix(wI, fileName);
+    else if (matOrCol == "Columns") saveAsCols(wI, fileName);
+  }
+  
 }
