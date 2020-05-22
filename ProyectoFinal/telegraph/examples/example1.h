@@ -1,73 +1,88 @@
-//problem 1 setup: parameters, source, boundary and solution
+//example 1 setup: parameters, source, boundary and solution
 #include <cmath>
+#include <vector>
+#include <functional>
 
 #define _USE_MATH_DEFINES
 
-//equation parameters
-const double T0 = 0.0, TF = 1.0, Z0 = 0.0, ZF = 1.0;
-const unsigned int NT = 4, NZ = 4;
+//computation parameters
+const double t0 = 0.0, tf = 1.0; //time bounds, in seconds
+const double z0 = 0.0, zf = 1.0; //space bounds, in meters
 
-const double hT = static_cast<double>((TF - T0) / NT);
-const double hZ = static_cast<double>((ZF - Z0) / NZ);
+//system constants: linear densities
+/* R [=] ohm/meter, L [=] henry/meter,
+   C [=] farad/meter, G [=] siemens/meter */
+const double R = 0.1, L = 0.3, C = 2.0 / L, G = 0.2;
 
-const double k = 1.0;
+//quantity of points along t an z axes
+const unsigned int NT = 3, NZ = 3;
 
-//outputs T value of index i given
-double T(unsigned int i)
+/* INITIAL AND BOUNDARY CONDITIONS FOR VOLTAGE */
+double v_t0(double z) //voltage at t0
 {
-  return T0 + i * hT;
+  return exp(sqrt(G * R) * z);
 }
 
-//outputs Z value of index j given
-double Z(unsigned int j)
+double ddt_v_t0(double z) //time derivative of voltage at t0
 {
-  return Z0 + j * hZ;
+  return -0.5 * (R*C + G*L) * exp(sqrt(G * R) * z);
 }
 
-//boundary condition: function at T0
-double atilde(unsigned int j)
+double v_z0(double t) //voltage at z0
 {
-  return exp(Z(j));
+  return exp(-0.5 * (R*C + G*L) * t);
 }
 
-//boundary condition: time derivative of function at T0
-double btilde(unsigned int j)
+double v_zf(double t) //voltage at zf
 {
-  return -exp(Z(j));
+  return exp(sqrt(G * R) * zf - 0.5 * (R*C + G*L) * t);
 }
 
-//boundary condition: function at Z0
-double ctilde(unsigned int i)
+//analytic solution for voltage
+double vSln(double t, double z)
 {
-  return exp(-T(i));
+  return exp(sqrt(R * G) * z - 0.5 * (R*C + G*L) * t);
 }
 
-//boundary condition: function at ZF
-double dtilde(unsigned int i)
+/* INITIAL AND BOUNDARY CONDITIONS FOR CURRENT */
+double i_t0(double z) //current at t0
 {
-  return exp(1.0 - T(i));
+  return 0.0;
 }
 
-//boundary function compilation
-double boundFunc(unsigned int i, unsigned int j)
+double ddt_i_t0(double z) //time derivative of current at t0
 {
-  double outVal = 0.0;
-  
-  if (i == 0) outVal = atilde(j);
-  if (j == 0) outVal = ctilde(i);
-  if (j == NZ) outVal = dtilde(i);
-  
-  return outVal;
+  return 0.0;
 }
 
-//time derivative at T0 function
-double initDerFunc(unsigned int j)
+double i_z0(double t) //current at z0
 {
-  return btilde(j);
+  return 0.0;
 }
 
-//analytic solution
-double exSln(unsigned int i, unsigned int j)
+double i_zf(double t) //current at zf
 {
-  return exp(Z(j) - T(i));
+  return 0.0;
 }
+
+//analytic solution for current
+double iSln(double t, double z)
+{
+  return 0.0;
+}
+
+/*PACKAGE USER INPUT AS VECTORS*/
+
+//vector containing endpoints defined above
+std::vector<double> endpoints{t0, tf, z0, zf};
+
+//vector containing system parameters defined above
+std::vector<double> params{R, L, C, G};
+
+//vector of functions, containing all boundary conditions for voltage
+std::vector<std::function<double(double)>> bcV{v_t0, ddt_v_t0, 
+                                               v_z0, v_zf};
+
+//vector of functions, containing all boundary conditions for current
+std::vector<std::function<double(double)>> bcI{i_t0, ddt_i_t0, 
+                                               i_z0, i_zf};
