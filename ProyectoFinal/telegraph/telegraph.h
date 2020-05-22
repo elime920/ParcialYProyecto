@@ -1,5 +1,6 @@
-//telegraph class declaration. Member functions defined in telegraph.cpp
+//telegraph class declaration. Member functions in telegraph.cpp
 #include <vector>
+#include <string>
 #include <functional>
 
 #ifndef TELEGRAPH_H
@@ -10,40 +11,49 @@ class telegraph
 {
   public:
     //constructor
-    telegraph(double, double, double, double, 
-              unsigned int, unsigned int, double,
-              std::function<double(unsigned int, unsigned int)>,
-              std::function<double(unsigned int)>);
+    telegraph(std::vector<double>, //endpoints
+              std::vector<double>, //system parameters
+              std::vector<std::function<double(double)>>, //b.c. for v
+              std::vector<std::function<double(double)>>, //b.c. for i
+              unsigned int, unsigned int); //# of points along t and z
      
     //destructor
     ~telegraph();
-    
+
+    //V boundary function data type
+    std::vector<std::function<double(double)>> bcV;
+    //I boundary function data type
+    std::vector<std::function<double(double)>> bcI;
+
     //set parameters appearing in the difference equation
     void setComputationParams();
 
-    //boundary function data type
-    std::function<double(unsigned int, unsigned int)> bFunc;
-    //time derivative on T0 function data type
-    std::function<double(unsigned int)> initConDer;
-        
-    //boundary function prototype
-    double boundary(unsigned int, unsigned int);
-    //time derivative on T0 function prototype
-    double timeDerOnT0(unsigned int);
-  
-    void setw(); //create the matrix associated to the BVP
+    //accesors for adimensional variables T and Z
+    double getT(unsigned int);
+    double getZ(unsigned int);
+
+    void setwV(); //create the matrix associated to the voltage
+    void setwI(); //create the matrix associated to the current
     
-    double getSln(unsigned int, unsigned int); //output the solution
+    double getwV(unsigned int, unsigned int); //output the voltage
+    double getwI(unsigned int, unsigned int); //output the voltage
     
-    void saveAsMatrix(std::string); //save output to file as matrix
-    void saveAsColumns(std::string); //save output to file as data columns
+    void saveAsMatrix(std::vector<std::vector<double>> &, std::string);
+    void saveAsCols(std::vector<std::vector<double>> &, std::string);
+    
+    //chose which data is to be saved and the method to save it
+    void saveToFile(std::string, std::string, std::string);
+    
+    double Jt, Jz; //jacobian transformation components (diag., const.)
 
   private:
-    unsigned short int NT, NZ; //points on x, on y, and inner grid
-    double T0, TF; //endpoints on x
-    double Z0, ZF; //endpoints on y
-    double k, alpha, beta, lambda, mu, nu, sigma; //difference equation parameters
-    std::vector<std::vector<double>> w; //solver matrix
+    double R, L, C, G; //system parameters
+    unsigned short int NT, NZ; //points on T and Z axes
+    double hT, hZ; //steps on T and Z
+    double T0, TF; //endpoints on T
+    double Z0, ZF; //endpoints on Z
+    double k, alpha, beta, lambda, mu, nu, sigma; //computation const.
+    std::vector<std::vector<double>> wV, wI; //matrices for V and I
 
 }; //end class telegraph
 
