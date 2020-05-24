@@ -40,8 +40,8 @@ double boundBVP(unsigned int i, unsigned int j)
   return value;
 }
 
-//analytic solution
+//analytic solution: not found for this case
 double analyticBVP(unsigned int i, unsigned int j)
 {
-  return ((x(i)/5.0) + (y(j)/6.0)) * (6.0 - x(i)) * (5.0 - y(j));
+  return 0.0;
 }

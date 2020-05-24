@@ -2,7 +2,7 @@
 #include <iostream>
 #include <iomanip>
 #include "telegraph.h"
-#include "examples/example1.h"
+#include "examples/example4.h"
 
 #define printIndex std::left << std::setw(2)
 #define printReal std::right << std::setw(7) << std::fixed << std::setprecision(4)
@@ -10,12 +10,29 @@
 
 int main()
 {
+  /*PACKAGE USER INPUT AS VECTORS*/
+
+  //vector containing endpoints
+  std::vector<double> endpoints{t0, tf, z0, zf};
+
+  //vector containing system parameters
+  std::vector<double> params{R, L, C, G};
+
+  //vector of functions, containing all boundary conditions for voltage
+  std::vector<std::function<double(double)>> bcV{v_t0, ddt_v_t0, 
+                                                 v_z0, v_zf};
+
+  //vector of functions, containing all boundary conditions for current
+  std::vector<std::function<double(double)>> bcI{i_t0, ddt_i_t0, 
+                                                 i_z0, i_zf};
+
   //object creation: bvp stands for Boundary Value Problem
   telegraph bvp(endpoints, params, bcV, bcI, NT, NZ);
 
   bvp.setwV(); //solve for voltage
-  bvp.setwI(); //solve for current
-    
+  //bvp.setwI(); //solve for current
+  
+  /*
   //print solution
   double vSol = 0.0, iSol = 0.0;
   std::cout << "Solution printing:" << std::endl;
@@ -45,9 +62,11 @@ int main()
                 << std::endl;
     }
   } //end printing
+  */
   
   //write to files
-  //bvp.saveToFile("V", "Columns", "outputCols.dat");
+  bvp.saveToFile("V", "Columns", "outputCols.dat");
+  bvp.saveToFile("V", "Matrix", "outputMatrix.dat");
 
   return(0);
 } //end main

@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iomanip>
 #include <cstdlib>
+#include <limits>
 #include "poisson2D.h"
 
 #define _USE_MATH_DEFINES
@@ -40,23 +41,16 @@ void poisson2D::setComputationParams()
   mu = 2.0 * (1.0 + lambda);
 }
 
-//auxiliary function to connect indices to argument function
-double poisson2D::evalOnIndices(unsigned int i, unsigned int j, 
-                  std::function<double(unsigned int, unsigned int)> func)
-{
-  return func(i, j);
-}
-
 //source function evaluation
 double poisson2D::source(unsigned int i, unsigned int j)
 {
-  return evalOnIndices(i, j, sFunc);
+  return sFunc(i, j);
 }
 
 //boundary function evaluation
 double poisson2D::boundary(unsigned int i, unsigned int j)
 {
-  return evalOnIndices(i, j, bFunc);
+  return bFunc(i, j);
 }
 
 //set the matrix associated to the BVP
@@ -108,7 +102,7 @@ void poisson2D::solveGaussJordan()
   {
     for (unsigned int j = 0; j < M[0].size(); j++)
     {
-      if (fabs(M[i][j]) > 1.0e-15) 
+      if (fabs(M[i][j]) > std::numeric_limits<double>::epsilon() ) 
       {
         value = M[i][j]; //first non-zero element
         
@@ -238,13 +232,37 @@ double poisson2D::getSln(unsigned int l)
 //save results to a file as a matrix
 void poisson2D::saveAsMatrix(std::string fileName)
 {
+  std::ifstream readFile; //in case file already exists
+  
+  readFile.open( fileName.c_str() ); //trying to open the file for input
+  
+  char userAns;
+  if ( !readFile.fail() ) //don't fail: data file exists
+  {
+    std::cout << "\nA file named '"<< fileName 
+              << "' already exists.\n" 
+              << "Continue and overwrite? [y/n]: ";
+    std::cin >> userAns;
+    std::cin.ignore(); //empties buffer
+    
+    //if user chooses not to overwrite
+    if (std::tolower(userAns) == 'n')
+    {
+      std::cout << "\nFile '" << fileName << "' won't be overwritten,"
+                   " process finished." << std::endl;
+      exit(1); //finish program execution
+    }
+  }
+  
+  readFile.close(); //finish reading process
+  
   std::ofstream writeSolution;
   writeSolution.open( fileName.c_str() ); //open the file for input
   
-  //check success when accessing the file
-  if ( writeSolution.fail() )
+  if ( writeSolution.fail() ) //check successfull opening
   {
-    std::cout << "File could not be opened." << std::endl;
+    std::cout << "\nFile '" << fileName 
+              << "' could not be opened." << std::endl;
     exit(1);
   }
   
@@ -278,13 +296,37 @@ void poisson2D::saveAsMatrix(std::string fileName)
 //save results to a file as three columns: x, y, w
 void poisson2D::saveAsColumns(std::string fileName)
 {
+  std::ifstream readFile; //in case file already exists
+  
+  readFile.open( fileName.c_str() ); //trying to open the file for input
+  
+  char userAns;
+  if ( !readFile.fail() ) //don't fail: data file exists
+  {
+    std::cout << "\nA file named '"<< fileName 
+              << "' already exists.\n" 
+              << "Continue and overwrite? [y/n]: ";
+    std::cin >> userAns;
+    std::cin.ignore(); //empties buffer
+    
+    //if user chooses not to overwrite
+    if (std::tolower(userAns) == 'n')
+    {
+      std::cout << "\nFile '" << fileName << "' won't be overwritten,"
+                   " process finished." << std::endl;
+      exit(1); //finish program execution
+    }
+  }
+  
+  readFile.close(); //finish reading process
+  
   std::ofstream writeSolution;
   writeSolution.open( fileName.c_str() ); //open the file for input
   
-  //check success when accessing the file
-  if ( writeSolution.fail() )
+  if ( writeSolution.fail() ) //check successfull opening
   {
-    std::cout << "File could not be opened." << std::endl;
+    std::cout << "\nFile '" << fileName 
+              << "' could not be opened." << std::endl;
     exit(1);
   }
   

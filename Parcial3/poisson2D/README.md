@@ -17,14 +17,18 @@ u(x, y) = g(x, y) on the boundary of S.
 
 3. *eqSolve.cpp*: main implementation. Depending on which problem is to be solved, include one of the problem headers.
 
-4. *Parcial3.py*: python code to plot the output for several examples.
+4. *outputPlots.py*: python code to plot the output for several examples.
+
+5. *Presentation.pdf*: slides shown when the project was unveiled.
 
 
 # Folders:
 
-- examples: contains two header files (*example1.h* and *example2.h*) to be included inside the main program, for them to be solved.
+- *examples*: contains two header files (*example1.h* and *example2.h*) to be included inside the main program, for them to be solved.
 
-- exercises: contains a subfolder named 'output images' where graphics from runtime executions are stored, and seven header files (*exercise1.h*, *exercise2.h*, *exercise3a.h*, *exercise3b.h*, *exercise3c.h*, *exercise3d.h*, *exercise8.h*) to be included inside the main program, for them to be solved.
+- *exercises*: contains seven header files (*exercise1.h*, *exercise2.h*, *exercise3a.h*, *exercise3b.h*, *exercise3c.h*, *exercise3d.h*, *exercise8.h*) to be included inside the main program, for them to be solved.
+
+- *outputPlots*: graphics from runtime executions (generated with *outputPlots.py*) are stored.
 
 
 # Compilation:

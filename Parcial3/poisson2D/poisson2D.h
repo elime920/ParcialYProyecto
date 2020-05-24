@@ -20,11 +20,7 @@ class poisson2D
     
     //set parameters appearing in the difference equation
     void setComputationParams();
-    
-    //auxiliary function to assign the source and boundary functions
-    double evalOnIndices(unsigned int, unsigned int, 
-                         std::function<double(unsigned int, unsigned int)>);
-    
+        
     //source function data type
     std::function<double(unsigned int, unsigned int)> sFunc;
     //boundary function data type

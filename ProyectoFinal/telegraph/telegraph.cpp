@@ -228,7 +228,7 @@ void telegraph::saveAsCols(std::vector<std::vector<double>> &w, std::string file
               << "' already exists.\n" 
               << "Continue and overwrite? [y/n]: ";
     std::cin >> userAns;
-    std::cin.ignore(); //empties buffer
+    //std::cin.ignore(); //empties buffer
     
     //if user chooses not to overwrite
     if (std::tolower(userAns) == 'n')
@@ -262,8 +262,8 @@ void telegraph::saveAsCols(std::vector<std::vector<double>> &w, std::string file
   {
     for (unsigned int j = 0; j <= NZ; j++)
     {
-      writeSolution << T0 + i * hT << " " 
-                    << Z0 + j * hZ << " " 
+      writeSolution << getT(i)/Jt << " " 
+                    << getZ(j)/Jz << " " 
                     << w[i][j] << std::endl;
     }
   }
