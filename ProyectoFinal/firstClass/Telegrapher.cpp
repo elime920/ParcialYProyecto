@@ -12,7 +12,7 @@
 
 //constructor
 Telegrapher::Telegrapher(double TInit, double TFin, double ZInit,
-			 double Zfin, double ZFin,double kcons,
+			 double ZFin, double kcons,
 			 double stepZ, double stepT,
 		         unsigned int TPoints, unsigned int ZPoints, 
                          std::function<double(unsigned int, unsigned int)> sf,
@@ -22,8 +22,7 @@ Telegrapher::Telegrapher(double TInit, double TFin, double ZInit,
     NT(TPoints), NZ(ZPoints), //quantity of points on t and z axes
     k(kcons), hZ(stepZ), hT(stepT),  
     sFunc(sf), bFunc(bf), //source and boundary functions
-    dim((NT+1)*(NZ+1)), //size of matrix approximations.
-    W(dim, std::vector<double>(dim, 0)) // matrix W.
+    W(NT+1, std::vector<double>(NT +1, 0)) // matrix W.
 {
   std::cout << "Soluciones para la línea de transmisión.\n" << std::endl;
   std::cout << "-------Ecuaciones del telégrafo--------\n" << std::endl;
@@ -69,22 +68,41 @@ double Telegrapher::boundary(unsigned int i, unsigned int j)
 }
 
 //set the matrix associated to the BVP
-void Telegrapher::setW()
+void Telegrapher::setfirstline(unsigned int j)
 {
- 
-  for (unsigned int row = 0; row < W.size(); row++)
-  {
-    for (unsigned int col = 0; col < W[0].size(); col++)
+  for(j = 1; j < NZ; j++)
     {
-      if (row == 0) W[row][col] = boundary(0,col);
-      if (col == 0) W[row][col] = boundary(row,0);
-      if (col == Nz-1) W[row][col] = boundary(row,Nz);
-
-      if (row == 1) W[row][col] = mu * boundary(0,col) + nu * source(0,col) + sigma* (boundary(0,col-1) +boundary(0,col+1));
-
-      if (row > 1 && row <= NT-1 && col > 0) W[row+1][col] = alpha*W[row-1][col] + beta* W[row][col] + lambda* (W[row][col-1]+ W[row][col+1]);
+      W[1][j] = mu*boundary(0,j) + nu*source(0,j) +
+	        sigma*(boundary(0,j-1) + boundary(0,j+1));
     }
-  }
+}
+
+void Telegrapher::Bounds(unsigned int i, unsigned int j)
+{
+  for(i = 0; i <= NT; i++)
+    {
+      for(j = 0; j <= NZ; j++)
+	{
+	  if(i == 0) W[i][j] = boundary(0,j);
+	  if(j == 0) W[i][j] = boundary(i,0);
+	  if(j == NZ) W[i][j] = boundary(i,NZ);
+	}
+    }
+}
+
+void Telegrapher::Inner(unsigned int i, unsigned int j)
+{
+  for(i = 0; i <= NT; i++)
+    {
+      for(j = 0; j <= NZ; j++)
+	{
+	  if(i > 0 && i < NT && j > 0 && j < NZ)
+	    {
+	      W[i+1][j] = alpha*W[i-1][j] + beta * W[i][j] +
+		          lambda * (W[i][j-1] + W[i][j+1]);
+	    }
+	}
+    }
 }
 
 //set the vector of boundary and source functions
