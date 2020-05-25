@@ -2,11 +2,11 @@
 #include <iostream>
 #include <iomanip>
 #include "telegraph.h"
-#include "examples/example4.h"
+#include "examples/example1.h"
 
 #define printIndex std::left << std::setw(2)
 #define printReal std::right << std::setw(7) << std::fixed << std::setprecision(4)
-#define printComp std::setw(7) << std::scientific << std::setprecision(1)
+#define printScN std::setw(7) << std::scientific << std::setprecision(1)
 
 int main()
 {
@@ -28,6 +28,12 @@ int main()
 
   //object creation: bvp stands for Boundary Value Problem
   telegraph bvp(endpoints, params, bcV, bcI, NT, NZ);
+  
+  //show characteristic time and length of the system
+  std::cout << "Characteristic time for the system: " 
+            << printScN << charTime << " seconds. \n"
+            << "Characteristic length for the system: " 
+            << printScN << charLength << " meters." << std::endl;
 
   bvp.setwV(); //solve for voltage
   //bvp.setwI(); //solve for current
@@ -55,10 +61,10 @@ int main()
                 << printReal << bvp.getZ(j)/bvp.Jz << " |"
                 << printReal << bvp.getwV(i, j) << " "
                 << printReal << vSol << " |" 
-                << printComp << fabs(vSol - bvp.getwV(i, j)) << "||"
+                << printScN << fabs(vSol - bvp.getwV(i, j)) << "||"
                 << printReal << bvp.getwI(i, j) << " "
                 << printReal << iSol << " |" 
-                << printComp << fabs(iSol - bvp.getwI(i, j)) << "|"
+                << printScN << fabs(iSol - bvp.getwI(i, j)) << "|"
                 << std::endl;
     }
   } //end printing

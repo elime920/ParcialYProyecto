@@ -13,8 +13,8 @@ class telegraph
     //constructor
     telegraph(std::vector<double>, //endpoints
               std::vector<double>, //system parameters
-              std::vector<std::function<double(double)>>, //b.c. for v
-              std::vector<std::function<double(double)>>, //b.c. for i
+              std::vector<std::function<double(double)>>, //b.c. for V
+              std::vector<std::function<double(double)>>, //b.c. for I
               unsigned int, unsigned int); //# of points along t and z
      
     //destructor

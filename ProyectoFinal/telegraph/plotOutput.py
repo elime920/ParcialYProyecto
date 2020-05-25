@@ -47,7 +47,7 @@ def init():
   ax.set_xlim(z0, zf)
   ax.set_ylim(minV, maxV)
   ax.set_xlabel(r"$z\ (m)$")
-  ax.set_ylabel(r"$w$")
+  ax.set_ylabel(r"$W\ (V)$")
   ax.grid()
   
 def update(i):
@@ -55,4 +55,4 @@ def update(i):
   time_text.set_text("Transmission line, t = %.3f s"%(tarr[i]))
   
 ani = FuncAnimation(fig, update, range(0, NT), init_func = init)
-ani.save("animation.gif", writer = 'imagemagick', fps = 20)
+ani.save("animation.gif", writer = 'imagemagick', fps = 16)
