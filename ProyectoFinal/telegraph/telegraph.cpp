@@ -45,15 +45,15 @@ telegraph::~telegraph()
 //set the computation parameters
 void telegraph::setComputationParams()
 { 
-  //proportionality constants to convert t and z to T and Z
-  Jt = sqrt((G * R) / (L * C));
-  Jz = sqrt(G * R);
+  //characteristic time and length for the system
+  Tc = sqrt((L * C) / (G * R));
+  Lc = 1.0 / sqrt(G * R);
   
   //k factor appearing on adimensionalized PDE
   k = sqrt((R * C) / (G * L)) + sqrt((G * L) / (R * C));
   
   //adimensionalize endpoints
-  T0 *= Jt; 	TF *= Jt; 	Z0 *= Jz; 	ZF *= Jz;
+  T0 /= Tc; 	TF /= Tc; 	Z0 /= Lc; 	ZF /= Lc;
 
   //steps along T and Z
   hT = static_cast<double>((TF - T0) / NT);
@@ -83,23 +83,23 @@ double telegraph::getZ(unsigned int j)
 void telegraph::setwV()
 {
   //use condition of voltage at t0
-  for (unsigned int j = 0; j <= NT; j++)
+  for (unsigned int j = 0; j <= NZ; j++)
   {
-    wV[0][j] = bcV[0](getZ(j) / Jz);
+    wV[0][j] = bcV[0](Lc*getZ(j));
   }
   
   //use condition of time derivative of voltage at t0
-  for (unsigned int j = 0; j <= NT; j++)
+  for (unsigned int j = 0; j <= NZ; j++)
   {
-    wV[1][j] = mu * bcV[0](getZ(j)/Jz) + nu * bcV[1](getZ(j)/Jz)/Jz + 
-               sigma * (bcV[0](getZ(j-1)/Jz) + bcV[0](getZ(j+1)/Jz));
+    wV[1][j] = mu * bcV[0](Lc*getZ(j)) + nu * Tc*bcV[1](Lc*getZ(j)) + 
+               sigma * (bcV[0](Lc*getZ(j-1)) + bcV[0](Lc*getZ(j+1)));
   }
   
   //use spatial boundary conditiones: voltage at z0 and zf
   for (unsigned int i = 0; i <= NT; i++)
   {
-    wV[i][0] = bcV[2](getT(i)/Jt); //voltage at z0
-    wV[i][NZ] = bcV[3](getT(i)/Jt); //voltage at zf
+    wV[i][0] = bcV[2](Tc*getT(i)); //voltage at z0
+    wV[i][NZ] = bcV[3](Tc*getT(i)); //voltage at zf
   }
   
   //inner region
@@ -117,23 +117,23 @@ void telegraph::setwV()
 void telegraph::setwI()
 {
   //use condition of current at t0
-  for (unsigned int j = 0; j <= NT; j++)
+  for (unsigned int j = 0; j <= NZ; j++)
   {
-    wI[0][j] = bcI[0](getZ(j) / Jz);
+    wI[0][j] = bcI[0](Lc*getZ(j));
   }
   
   //use condition of time derivative of current at t0
-  for (unsigned int j = 0; j <= NT; j++)
+  for (unsigned int j = 0; j <= NZ; j++)
   {
-    wI[1][j] = mu * bcI[0](getZ(j)/Jz) + nu * bcI[1](getZ(j)/Jz)/Jz + 
-               sigma * (bcI[0](getZ(j-1)/Jz) + bcI[0](getZ(j+1)/Jz));
+    wI[1][j] = mu * bcI[0](Lc*getZ(j)) + nu * Tc*bcI[1](Lc*getZ(j)) + 
+               sigma * (bcI[0](Lc*getZ(j-1)) + bcI[0](Lc*getZ(j+1)));
   }
   
   //use spatial boundary conditiones: current at z0 and zf
   for (unsigned int i = 0; i <= NT; i++)
   {
-    wI[i][0] = bcI[2](getT(i)/Jt); //current at z0
-    wI[i][NZ] = bcI[3](getT(i)/Jt); //current at zf
+    wI[i][0] = bcI[2](Tc*getT(i)); //current at z0
+    wI[i][NZ] = bcI[3](Tc*getT(i)); //current at zf
   }
   
   //inner region
@@ -262,8 +262,8 @@ void telegraph::saveAsCols(std::vector<std::vector<double>> &w, std::string file
   {
     for (unsigned int j = 0; j <= NZ; j++)
     {
-      writeSolution << getT(i)/Jt << " " 
-                    << getZ(j)/Jz << " " 
+      writeSolution << Tc*getT(i) << " " 
+                    << Lc*getZ(j) << " " 
                     << w[i][j] << std::endl;
     }
   }

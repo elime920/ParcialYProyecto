@@ -17,8 +17,8 @@ const double charTime = sqrt((L * C) / (G * R));
 const double charLength = 1.0 / sqrt(G * R);
 
 //computation parameters
-const double t0 = 0.0, tf = 8.0 * charTime; //time bounds, in seconds
-const double z0 = 0.0, zf = 8.0 * charLength; //space bounds, in meters
+const double t0 = 0.0, tf = charTime; //time bounds, in seconds
+const double z0 = 0.0, zf = charLength; //space bounds, in meters
 
 //quantity of points along t an z axes
 const unsigned int NT = 64, NZ = 64;

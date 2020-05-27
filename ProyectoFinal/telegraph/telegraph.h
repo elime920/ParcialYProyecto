@@ -25,9 +25,6 @@ class telegraph
     //I boundary function data type
     std::vector<std::function<double(double)>> bcI;
 
-    //set parameters appearing in the difference equation
-    void setComputationParams();
-
     //accesors for adimensional variables T and Z
     double getT(unsigned int);
     double getZ(unsigned int);
@@ -43,11 +40,12 @@ class telegraph
     
     //chose which data is to be saved and the method to save it
     void saveToFile(std::string, std::string, std::string);
-    
-    double Jt, Jz; //jacobian transformation components (diag., const.)
 
   private:
-    double R, L, C, G; //system parameters
+    //set parameters appearing in the difference equation
+    void setComputationParams();
+    double Tc, Lc; //characteristic length and time for the system
+    double R, L, C, G; //system primary parameters
     unsigned short int NT, NZ; //points on T and Z axes
     double hT, hZ; //steps on T and Z
     double T0, TF; //endpoints on T

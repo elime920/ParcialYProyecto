@@ -52,7 +52,7 @@ def init():
   
 def update(i):
   plotvar.set_data(zarr, w[i])
-  time_text.set_text("Transmission line, t = %.3f s"%(tarr[i]))
+  time_text.set_text("Transmission line, t = %.3e s"%(tarr[i]))
   
 ani = FuncAnimation(fig, update, range(0, NT), init_func = init)
 ani.save("animation.gif", writer = 'imagemagick', fps = 16)

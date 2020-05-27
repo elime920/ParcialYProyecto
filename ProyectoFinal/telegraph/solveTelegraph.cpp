@@ -2,7 +2,7 @@
 #include <iostream>
 #include <iomanip>
 #include "telegraph.h"
-#include "examples/example1.h"
+#include "examples/examplePULSES.h"
 
 #define printIndex std::left << std::setw(2)
 #define printReal std::right << std::setw(7) << std::fixed << std::setprecision(4)
@@ -57,8 +57,8 @@ int main()
       
       std::cout << printIndex << i << " " 
                 << printIndex << j << "|"
-                << printReal << bvp.getT(i)/bvp.Jt << " " 
-                << printReal << bvp.getZ(j)/bvp.Jz << " |"
+                << printReal << charTime * bvp.getT(i) << " " 
+                << printReal << charLength * bvp.getZ(j) << " |"
                 << printReal << bvp.getwV(i, j) << " "
                 << printReal << vSol << " |" 
                 << printScN << fabs(vSol - bvp.getwV(i, j)) << "||"
