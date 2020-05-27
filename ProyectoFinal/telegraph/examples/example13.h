@@ -1,14 +1,12 @@
-//example 1 setup: parameters, source, boundary and solution
+//example 4 setup: parameters, source, boundary and solution
 #include <cmath>
-#include <vector>
-#include <functional>
 
 #define _USE_MATH_DEFINES
 
 //system constants: linear densities
 /* R [=] ohm/meter, L [=] henry/meter,
    C [=] farad/meter, G [=] siemens/meter */
-const double R = 0.1, L = 0.1, C = 2.0 / L, G = 1.0;
+const double R = 2.0 * M_PI, L = M_PI, C = M_PI, G = 2.0 * M_PI;
 
 //characteristic time for the system
 const double charTime = sqrt((L * C) / (G * R));
@@ -21,33 +19,33 @@ const double t0 = 0.0, tf = 8.0 * charTime; //time bounds, in seconds
 const double z0 = 0.0, zf = 8.0 * charLength; //space bounds, in meters
 
 //quantity of points along t an z axes
-const unsigned int NT = 64, NZ = 64;
+const unsigned int NT = 32, NZ = 32;
 
 /* INITIAL AND BOUNDARY CONDITIONS FOR VOLTAGE */
 double v_t0(double z) //voltage at t0
 {
-  return exp(sqrt(G * R) * z);
+  return sinh(z);
 }
 
 double ddt_v_t0(double z) //time derivative of voltage at t0
 {
-  return -0.5 * (R*C + G*L) * exp(sqrt(G * R) * z);
+  return -2.0 * sinh(z);
 }
 
 double v_z0(double t) //voltage at z0
 {
-  return exp(-0.5 * (R*C + G*L) * t);
+  return 0.0;
 }
 
 double v_zf(double t) //voltage at zf
 {
-  return exp(sqrt(G * R) * zf - 0.5 * (R*C + G*L) * t);
+  return exp(-2.0 * t) * sinh(1);
 }
 
 //analytic solution for voltage
 double vSln(double t, double z)
 {
-  return exp(sqrt(R * G) * z - 0.5 * (R*C + G*L) * t);
+  return 0.0;
 }
 
 /* INITIAL AND BOUNDARY CONDITIONS FOR CURRENT */

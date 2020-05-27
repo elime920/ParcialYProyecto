@@ -5,17 +5,23 @@
 
 #define _USE_MATH_DEFINES
 
-//computation parameters
-const double t0 = 0.0, tf = 4.0; //time bounds, in seconds
-const double z0 = 0.0, zf = 4.0; //space bounds, in meters
-
 //system constants: linear densities
 /* R [=] ohm/meter, L [=] henry/meter,
    C [=] farad/meter, G [=] siemens/meter */
-const double R = 0.1, L = 1.0, C = 0.1, G = 1.0;
+const double R = 0.1, L = 0.1, C = 0.1, G = 0.1;
+
+//characteristic time for the system
+const double charTime = sqrt((L * C) / (G * R));
+
+//characteristic length for the system
+const double charLength = 1.0 / sqrt(G * R);
+
+//computation parameters
+const double t0 = 0.0, tf = 4.0 * charTime; //time bounds, in seconds
+const double z0 = 0.0, zf = 4.0 * charLength; //space bounds, in meters
 
 //quantity of points along t an z axes
-const unsigned int NT = 10, NZ = 10;
+const unsigned int NT = 64, NZ = 64;
 
 /* INITIAL AND BOUNDARY CONDITIONS FOR VOLTAGE */
 double v_t0(double z) //voltage at t0
@@ -30,7 +36,7 @@ double ddt_v_t0(double z) //time derivative of voltage at t0
 
 double v_z0(double t) //voltage at z0
 {
-  return sin(8.0 * t);
+  return sin(M_PI * t / charTime);
 }
 
 double v_zf(double t) //voltage at zf
