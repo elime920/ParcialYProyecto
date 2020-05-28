@@ -33,10 +33,12 @@ class Telegrapher
   double source(unsigned int, unsigned int);
     //boundary function prototype
   double boundary(unsigned int, unsigned int);
-  void setW(); //create the matrix associated to the BVP
+  void setfirstline(unsigned int);
+  void Bounds(unsigned int, unsigned int);
+  void Inner(unsigned int, unsigned int);
   double getSln(unsigned int, unsigned int);
  private:
-  unsigned short int NT, Nz, dim;
+  unsigned short int NT, NZ;
   double T0, T;
   double Z0, ZF;
   double lambda, alpha, beta; //difference equation parameters

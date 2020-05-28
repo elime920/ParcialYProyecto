@@ -11,15 +11,13 @@
 #define _USE_MATH_DEFINES
 
 //constructor
-Telegrapher::Telegrapher(double TInit, double TFin, double ZInit,
-			 double ZFin, double kcons,
+Telegrapher::Telegrapher (double kcons,
 			 double stepZ, double stepT,
 		         unsigned int TPoints, unsigned int ZPoints, 
                          std::function<double(unsigned int, unsigned int)> sf,
                          std::function<double(unsigned int, unsigned int)> bf)
-                     
-  : T0(TInit), T(TFin), Z0(ZInit), ZF(ZFin), //extremal points
-    NT(TPoints), NZ(ZPoints), //quantity of points on t and z axes
+
+  : NT(TPoints), NZ(ZPoints), //quantity of points on t and z axes
     k(kcons), hZ(stepZ), hT(stepT),  
     sFunc(sf), bFunc(bf), //source and boundary functions
     W(NT+1, std::vector<double>(NT +1, 0)) // matrix W.
