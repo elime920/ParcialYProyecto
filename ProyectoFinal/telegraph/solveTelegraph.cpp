@@ -2,7 +2,7 @@
 #include <iostream>
 #include <iomanip>
 #include "telegraph.h"
-#include "examples/examplePULSES.h"
+#include "examples/exampleEXPCOSH.h"
 
 #define printIndex std::left << std::setw(2)
 #define printReal std::right << std::setw(7) << std::fixed << std::setprecision(4)
@@ -36,9 +36,8 @@ int main()
             << printScN << charLength << " meters." << std::endl;
 
   bvp.setwV(); //solve for voltage
-  //bvp.setwI(); //solve for current
+  bvp.setwI(); //solve for current
   
-  /*
   //print solution
   double vSol = 0.0, iSol = 0.0;
   std::cout << "Solution printing:" << std::endl;
@@ -52,8 +51,8 @@ int main()
   {
     for (unsigned int j = 0; j <= NZ; j++)
     {
-      vSol = vSln(bvp.getT(i)/bvp.Jt, bvp.getZ(j)/bvp.Jz);
-      iSol = iSln(bvp.getT(i)/bvp.Jt, bvp.getZ(j)/bvp.Jz);
+      vSol = vSln(charTime * bvp.getT(i), charLength * bvp.getZ(j));
+      iSol = iSln(charTime * bvp.getT(i), charLength * bvp.getZ(j));
       
       std::cout << printIndex << i << " " 
                 << printIndex << j << "|"
@@ -68,7 +67,6 @@ int main()
                 << std::endl;
     }
   } //end printing
-  */
   
   //write to files
   bvp.saveToFile("V", "Columns", "outputCols.dat");

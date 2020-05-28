@@ -20,11 +20,6 @@ class telegraph
     //destructor
     ~telegraph();
 
-    //V boundary function data type
-    std::vector<std::function<double(double)>> bcV;
-    //I boundary function data type
-    std::vector<std::function<double(double)>> bcI;
-
     //accesors for adimensional variables T and Z
     double getT(unsigned int);
     double getZ(unsigned int);
@@ -35,15 +30,24 @@ class telegraph
     double getwV(unsigned int, unsigned int); //output the voltage
     double getwI(unsigned int, unsigned int); //output the voltage
     
-    void saveAsMatrix(std::vector<std::vector<double>> &, std::string);
-    void saveAsCols(std::vector<std::vector<double>> &, std::string);
-    
     //chose which data is to be saved and the method to save it
     void saveToFile(std::string, std::string, std::string);
 
+
   private:
+  
+    //V boundary function data type
+    std::vector<std::function<double(double)>> bcV;
+    //I boundary function data type
+    std::vector<std::function<double(double)>> bcI;
+  
     //set parameters appearing in the difference equation
     void setComputationParams();
+    
+    //save the referenced matrix with the given name in either way
+    void saveAsMatrix(std::vector<std::vector<double>> &, std::string);
+    void saveAsCols(std::vector<std::vector<double>> &, std::string);
+    
     double Tc, Lc; //characteristic length and time for the system
     double R, L, C, G; //system primary parameters
     unsigned short int NT, NZ; //points on T and Z axes

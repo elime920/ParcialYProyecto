@@ -20,7 +20,7 @@ const double t0 = 0.0, tf = 2*charTime; //time bounds, in seconds
 const double z0 = 0.0, zf = 2*charLength; //space bounds, in meters
 
 //quantity of points along t an z axes
-const unsigned int NT = 64, NZ = 64;
+const unsigned int NT = 4, NZ = 4;
 
 /* INITIAL AND BOUNDARY CONDITIONS FOR VOLTAGE */
 double v_t0(double z) //voltage at t0
